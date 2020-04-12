@@ -16,10 +16,14 @@ public interface TrackGenerator {
 
     Track getNextTrack(int trackPointer);
 
+    void parseTrackPiecesData();
+
     boolean validateTrack(Track track);
 
     void reshuffle();
 
     List<?> shuffle(List<?> objectsList);
+
+    boolean checkValidator();
 
 }

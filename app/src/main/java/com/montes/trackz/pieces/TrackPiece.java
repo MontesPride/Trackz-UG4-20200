@@ -1,5 +1,7 @@
 package com.montes.trackz.pieces;
 
+import androidx.annotation.NonNull;
+
 public abstract class TrackPiece {
 
     private String id;
@@ -16,12 +18,24 @@ public abstract class TrackPiece {
         return this.id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public double getLength() {
         return this.length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
     }
 
     public double getAngle() {
@@ -32,4 +46,9 @@ public abstract class TrackPiece {
         return 0;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return this.id;
+    }
 }

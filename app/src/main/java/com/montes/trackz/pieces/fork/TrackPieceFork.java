@@ -1,4 +1,4 @@
-package com.montes.trackz.pieces.forks;
+package com.montes.trackz.pieces.fork;
 
 import com.montes.trackz.pieces.TrackPiece;
 

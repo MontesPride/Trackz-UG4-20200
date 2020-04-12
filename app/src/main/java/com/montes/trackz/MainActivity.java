@@ -1,14 +1,11 @@
 package com.montes.trackz;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.montes.trackz.generators.BasicTrackGenerator;
+import com.montes.trackz.generators.procedural.ProceduralTrackGenerator;
 import com.montes.trackz.generators.TrackGenerator;
-import com.montes.trackz.generators.TrackGeneratorImpl;
-import com.montes.trackz.pieces.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -17,8 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,11 +41,22 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Generating Tracks", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 getTrackGenerator().getNextTrack();
             }
         });
+
+        FloatingActionButton fabGenerateTrack = findViewById(R.id.fabGenerateTrack);
+        fabGenerateTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Generating Track", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                getTrackGenerator().checkValidator();
+            }
+        });
+
         Log.d(tag, "[onCreate] End");
     }
 
@@ -58,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(tag, "[onStart] Start");
         super.onStart();
-        setTrackGenerator(new BasicTrackGenerator(this.getApplicationContext()));
+        setTrackGenerator(new ProceduralTrackGenerator(this.getApplicationContext()));
         Log.d(tag, "[onStart] End");
     }
 

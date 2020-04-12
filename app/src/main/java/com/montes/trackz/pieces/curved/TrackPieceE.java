@@ -1,8 +1,8 @@
-package com.montes.trackz.pieces.curves;
+package com.montes.trackz.pieces.curved;
 
 import com.montes.trackz.util.Consts;
 
-public class TrackPieceE extends TrackPieceCurve {
+public class TrackPieceE extends TrackPieceCurved {
 
     private static final String staticId = "E";
     private static final String staticName = "Large Curve";

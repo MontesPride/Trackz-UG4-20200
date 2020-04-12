@@ -11,8 +11,14 @@ public class Consts {
 
     public static final String PERMUTATION_BINARY_FORMAT_STRING = "%%1$%ds";
 
-    public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_A = 4;
-    public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_E = 8;
-    public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_N = 2;
+    public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_A = 0;
+    public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_E = 20;
+    public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_N = 0;
+
+    public static final int FIELD_SIZE = 70;
+    public static final int NUM_OF_GENERATED_POINTS_MIN = 8;
+    public static final int NUM_OF_GENERATED_POINTS_MAX = 12;
+
+    public static final int TRANSFORMATION_MULTIPLIER = 5;
 
 }

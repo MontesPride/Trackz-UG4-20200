@@ -37,7 +37,7 @@ public class TrackImpl implements Track {
     public String getTrackString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (TrackPiece trackPiece : this.trackPieces) {
-            stringBuilder.append(trackPiece.getId());
+            stringBuilder.append(trackPiece.toString());
         }
         //Log.d(tag, String.format("[getTrackString] trackString: %s", stringBuilder.toString()));
         return stringBuilder.toString();
