@@ -25,24 +25,32 @@ public class ConvexHull {
         int k = 0;
 
         for (int i = 0; i < size; ++i) {
-            while(k >= 2 && ccw(sortedGeneratedPoints.get(k - 2), sortedGeneratedPoints.get(k - 1), sortedGeneratedPoints.get(i)) <= 0)
+            while(k >= 2 && ccw(convexHullPoints.get(k - 2), convexHullPoints.get(k - 1), sortedGeneratedPoints.get(i)) <= 0) {
+                //Log.d(tag, String.format("[computePolygon][lowerHull] convexHullPoints: %s", convexHullPoints));
+                //Log.d(tag, String.format("[computePolygon][lowerHull] removing: %s, i: %d, k: %d", convexHullPoints.get(k-1), i, k));
                 convexHullPoints.remove(--k);
+                //Log.d(tag, String.format("[computePolygon][lowerHull] convexHullPoints: %s", convexHullPoints));
+            }
             convexHullPoints.add(sortedGeneratedPoints.get(i));
             ++k;
-            Log.d(tag, String.format("[computePolygon][lowerHull] i: %d, k: %d", i, k));
+            //Log.d(tag, String.format("[computePolygon][lowerHull] convexHullPoints: %s, i: %d, k: %d", convexHullPoints, i, k));
         }
 
-        Log.d(tag, String.format("[computePolygon] convexHullPoints: %s", convexHullPoints));
+        Log.d(tag, String.format("[computePolygon] lowerHullPoints: %s", convexHullPoints));
 
         for (int i = size - 2, t = k + 1; i >= 0; --i) {
-            while(k >= t && ccw(sortedGeneratedPoints.get(k - 2), sortedGeneratedPoints.get(k - 1), sortedGeneratedPoints.get(i)) <= 0)
+            while(k >= t && ccw(convexHullPoints.get(k - 2), convexHullPoints.get(k - 1), sortedGeneratedPoints.get(i)) <= 0) {
+                //Log.d(tag, String.format("[computePolygon][upperHull] convexHullPoints: %s", convexHullPoints));
+                //Log.d(tag, String.format("[computePolygon][upperHull] removing: %s, i: %d, k: %d", convexHullPoints.get(k-1), i, k));
                 convexHullPoints.remove(--k);
+                //Log.d(tag, String.format("[computePolygon][upperHull] convexHullPoints: %s", convexHullPoints));
+            }
             convexHullPoints.add(sortedGeneratedPoints.get(i));
             ++k;
-            Log.d(tag, String.format("[computePolygon][upperHull] i: %d, k: %d", i, k));
+            //Log.d(tag, String.format("[computePolygon][upperHull] convexHullPoints: %s, i: %d, k: %d", convexHullPoints, i, k));
         }
 
-        Log.d(tag, String.format("[computePolygon] k: %d", k));
+        //Log.d(tag, String.format("[computePolygon] k: %d", k));
 
         Log.d(tag, String.format("[computePolygon] convexHullPoints: %s", convexHullPoints));
 

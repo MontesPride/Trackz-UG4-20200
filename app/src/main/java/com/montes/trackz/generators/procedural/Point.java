@@ -3,13 +3,14 @@ package com.montes.trackz.generators.procedural;
 import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class Point {
 
     private int x;
     private int y;
 
-    Point(int x, int y) {
+    public Point(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -45,4 +46,15 @@ public class Point {
         }
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Point) {
+            Point checkPoint = (Point) obj;
+            return this.x == checkPoint.x && this.y == checkPoint.y;
+        }
+        return false;
+    }
 }

@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.montes.trackz.generators.TrackGeneratorImpl;
+import com.montes.trackz.generators.basic.BasicTrackGenerator;
 import com.montes.trackz.generators.procedural.ProceduralTrackGenerator;
 import com.montes.trackz.generators.TrackGenerator;
 
@@ -15,18 +17,44 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String tag = "MainActivity";
-    private TrackGenerator trackGenerator;
+    private List<TrackGenerator> trackGenerators;
 
-    public TrackGenerator getTrackGenerator() {
-        return this.trackGenerator;
+    public List<TrackGenerator> getTrackGenerators() {
+        if (this.trackGenerators == null)
+            return new ArrayList<>();
+        return this.trackGenerators;
+    }
+
+    public TrackGenerator getTrackGenerator(Class<?> trackGeneratorClass) {
+        for (TrackGenerator trackGenerator : this.trackGenerators) {
+            if (trackGeneratorClass.isInstance(trackGenerator))
+                return trackGenerator;
+        }
+        return null;
+    }
+
+    public void setTrackGenerators(List<TrackGenerator> trackGenerators) {
+        Log.d(tag, String.format("[setTrackGenerator] trackGenerators: %s", trackGenerators));
+        this.trackGenerators = trackGenerators;
     }
 
     public void setTrackGenerator(TrackGenerator trackGenerator) {
-        Log.d(tag, String.format("[setTrackGenerator] trackGenerator: %s", trackGenerator));
-        this.trackGenerator = trackGenerator;
+        List<TrackGenerator> trackGenerators = this.getTrackGenerators();
+        for (int i = 0; i < trackGenerators.size(); ++i) {
+            if (trackGenerators.get(i).getClass().isInstance(trackGenerator)) {
+                trackGenerators.add(i, trackGenerator);
+                setTrackGenerators(trackGenerators);
+                return;
+            }
+        }
+        trackGenerators.add(trackGenerator);
+        setTrackGenerators(trackGenerators);
     }
 
     @Override
@@ -37,23 +65,33 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabGenerateBasicTrack = findViewById(R.id.fabGenerateBasicTrack);
+        fabGenerateBasicTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Generating Tracks", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Generating Track using BasicTrackGenerator", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                getTrackGenerator().getNextTrack();
+                getTrackGenerator(BasicTrackGenerator.class).getNextTrack();
             }
         });
 
-        FloatingActionButton fabGenerateTrack = findViewById(R.id.fabGenerateTrack);
-        fabGenerateTrack.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabGenerateProceduralTrack = findViewById(R.id.fabGenerateProceduralTrack);
+        fabGenerateProceduralTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Generating Track", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Generating Track using ProceduralTrackGenerator", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                getTrackGenerator().checkValidator();
+                getTrackGenerator(ProceduralTrackGenerator.class).getNextTrack();
+            }
+        });
+
+        FloatingActionButton fabTrackValidator = findViewById(R.id.fabTrackValidator);
+        fabTrackValidator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Checking Validator", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                getTrackGenerator(BasicTrackGenerator.class).checkValidator();
             }
         });
 
@@ -64,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(tag, "[onStart] Start");
         super.onStart();
+        setTrackGenerator(new BasicTrackGenerator(this.getApplicationContext()));
         setTrackGenerator(new ProceduralTrackGenerator(this.getApplicationContext()));
         Log.d(tag, "[onStart] End");
     }

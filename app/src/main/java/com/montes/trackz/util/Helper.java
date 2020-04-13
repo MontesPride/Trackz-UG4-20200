@@ -6,9 +6,13 @@ import android.util.Log;
 import com.montes.trackz.pieces.TrackPiece;
 import com.montes.trackz.pieces.curved.TrackPieceCurved;
 import com.montes.trackz.pieces.curved.TrackPieceE;
+import com.montes.trackz.pieces.curved.TrackPieceE1;
 import com.montes.trackz.pieces.straight.TrackPieceA;
-import com.montes.trackz.pieces.straight.TrackPieceB;
-import com.montes.trackz.pieces.straight.TrackPieceC;
+import com.montes.trackz.pieces.straight.TrackPieceA1;
+import com.montes.trackz.pieces.straight.TrackPieceA2;
+import com.montes.trackz.pieces.straight.TrackPieceB2;
+import com.montes.trackz.pieces.straight.TrackPieceC2;
+import com.montes.trackz.pieces.straight.TrackPieceD;
 import com.montes.trackz.pieces.straight.TrackPieceStraight;
 import com.montes.trackz.pieces.straight.bridges.TrackPieceBridge;
 import com.montes.trackz.pieces.straight.bridges.TrackPieceN;
@@ -29,18 +33,33 @@ public class Helper {
             case "TrackPieceA":
                 Log.d(tag, "[getTrackPieceById] returning TrackPieceA");
                 return new TrackPieceA();
-            case "B":
-            case "TrackPieceB":
-                Log.d(tag, "[getTrackPieceById] returning TrackPieceB");
-                return new TrackPieceB();
-            case "C":
-            case "TrackPieceC":
-                Log.d(tag, "[getTrackPieceById] returning TrackPieceC");
-                return new TrackPieceC();
+            case "A1":
+            case "TrackPieceA1":
+                Log.d(tag, "[getTrackPieceById] returning TrackPieceA1");
+                return new TrackPieceA1();
+            case "A2":
+            case "TrackPieceA2":
+                Log.d(tag, "[getTrackPieceById] returning TrackPieceA2");
+                return new TrackPieceA2();
+            case "B2":
+            case "TrackPieceB2":
+                Log.d(tag, "[getTrackPieceById] returning TrackPieceB2");
+                return new TrackPieceB2();
+            case "C2":
+            case "TrackPieceC2":
+                Log.d(tag, "[getTrackPieceById] returning TrackPieceC2");
+                return new TrackPieceC2();
+            case "D":
+            case "TrackPieceD":
+                return new TrackPieceD();
             case "E":
             case "TrackPieceE":
                 Log.d(tag, "[getTrackPieceById] returning TrackPieceE");
                 return new TrackPieceE();
+            case "E1":
+            case "TrackPieceE1":
+                Log.d(tag, "[getTrackPieceById] returning TrackPieceE1");
+                return new TrackPieceE1();
             case "N":
             case "TrackPieceN":
                 Log.d(tag, "[getTrackPieceById] returning TrackPieceN");
@@ -57,9 +76,46 @@ public class Helper {
         return getTrackPieceById(trackPieceId, false);
     }
 
+    public static TrackPiece getStraightTrackPieceByLength(int length) {
+        switch (length) {
+            case 1:
+            case -1:
+                return new TrackPieceA2();
+            case 2:
+            case -2:
+                return new TrackPieceA1();
+            /*case 8:
+            case -8:
+                return new TrackPieceA();*/
+            case 4:
+            case -4:
+                return new TrackPieceD();
+            default:
+                return null;
+        }
+    }
+
+    public static TrackPiece getCurvedTrackPieceByLength(int length) {
+        return getCurvedTrackPieceByLength(length, true);
+    }
+
+    public static TrackPiece getCurvedTrackPieceByLength(int length, boolean clockwise) {
+        switch (length) {
+            case 2:
+            case -2:
+                return new TrackPieceE1(clockwise);
+            case 4:
+            case -4:
+                return new TrackPieceE(clockwise);
+            default:
+                return null;
+        }
+    }
+
     public static Map<String, Integer> getDefaultTrackPieces() {
         Map<String, Integer> trackPiecesData = new HashMap<>();
         trackPiecesData.put(TrackPieceA.class.getSimpleName(), Consts.DEFAULT_NUMBER_OF_TRACK_PIECE_A);
+        trackPiecesData.put(TrackPieceD.class.getSimpleName(), Consts.DEFAULT_NUMBER_OF_TRACK_PIECE_D);
         trackPiecesData.put(TrackPieceE.class.getSimpleName(), Consts.DEFAULT_NUMBER_OF_TRACK_PIECE_E);
         trackPiecesData.put(TrackPieceN.class.getSimpleName(), Consts.DEFAULT_NUMBER_OF_TRACK_PIECE_N);
 

@@ -46,6 +46,8 @@ public abstract class TrackPiece {
         return 0;
     }
 
+    public void rotate() {};
+
     @NonNull
     @Override
     public String toString() {

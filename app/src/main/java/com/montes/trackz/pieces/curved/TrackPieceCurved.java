@@ -23,6 +23,11 @@ public abstract class TrackPieceCurved extends TrackPiece {
         return this.angle;
     }
 
+    @Override
+    public void rotate() {
+        this.angle *= -1;
+    }
+
     @NonNull
     @Override
     public String toString() {
