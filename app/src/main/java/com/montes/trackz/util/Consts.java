@@ -26,5 +26,9 @@ public class Consts {
 
     public static final int MIN_LENGTH_OF_STRAIGHT_TRACK_PIECE = 1;
     public static final int MIN_LENGTH_OF_CURVED_TRACK_PIECE = 2;
+    public static final int MAX_LENGTH_OF_CURVED_TRACK_PIECE = 4;
+
+    public static final int MIN_DOUBLE_TURN_RADIUS = 4;
+    public static final int MAX_DOUBLE_TURN_RADIUS = 8;
 
 }

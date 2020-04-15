@@ -1,5 +1,9 @@
 package com.montes.trackz.pieces;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import androidx.annotation.NonNull;
 
 public abstract class TrackPiece {
@@ -53,4 +57,11 @@ public abstract class TrackPiece {
     public String toString() {
         return this.id;
     }
+
+    public static List<TrackPiece> joinTwoLists(List<TrackPiece> trackPieces1, List<TrackPiece> trackPieces2) {
+        if (trackPieces2 == null)
+            return trackPieces1;
+        return Stream.concat(trackPieces1.stream(), trackPieces2.stream()).collect(Collectors.toList());
+    }
+
 }

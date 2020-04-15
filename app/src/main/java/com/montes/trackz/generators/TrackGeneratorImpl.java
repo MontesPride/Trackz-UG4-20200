@@ -221,6 +221,9 @@ public abstract class TrackGeneratorImpl implements TrackGenerator {
 
     @Override
     public boolean validateTrack(Track track) {
+        if (track == null || track.getTrackPieces() == null) {
+            return false;
+        }
         double x = 0;
         double y = 0;
         double angle = 0;
