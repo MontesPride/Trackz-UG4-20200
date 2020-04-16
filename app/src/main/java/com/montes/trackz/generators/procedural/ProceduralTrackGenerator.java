@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,8 +52,8 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
 
             Log.d(tag, "[generateTrack] Trying to find a new track!");
 
-            //ConvexHull convexHull = new ConvexHull(TestTrackz.getProceduralPointList2());
-            ConvexHull convexHull = new ConvexHull(generatePoints());
+            ConvexHull convexHull = new ConvexHull(TestTrackz.getProceduralPointList2());
+            //ConvexHull convexHull = new ConvexHull(generatePoints());
             List<Point> convexPolygon = minimiseDirections(setNextAndPreviousPoints(convexHull.computePolygon()));
             if (!checkDirections(convexPolygon))
                 continue;
@@ -68,6 +69,7 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
                 }
                 finishedTrack = i == convexPolygon.size() - 2;
                 Log.d(tag, String.format("[generateTrack] p1: %s, p2: %s, trackPiecePath: %s", p1, p2, trackPiecePath));
+                trackPieces = TrackPiece.joinTwoLists(trackPieces, trackPiecePath);
                 //Log.d(tag, String.format("[generateTrack] isCurrentTrackValidBeforeRotation: %s", validateCurrentTrack(p1, p2, trackPieces, trackPiecePath, true)));
 
                 /*if (!validateCurrentTrack(convexPolygon.get(0), p2, trackPieces, trackPiecePath, true)) {
@@ -90,7 +92,7 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
         Log.d(tag, String.format("[generateTrack] trackPieces: %s", trackPieces));
         //Log.d(tag, String.format("[generateTrack] isWholeTrackValid: %s", validateCurrentTrack(convexPolygon.get(0), convexPolygon.get(0), trackPieces, true)));
         TrackImpl track = new TrackImpl(trackPieces);
-        validateTrack(track);
+        validateTrack(track, true);
         return track;
     }
 
@@ -179,23 +181,25 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
         return result;
     }
 
-    private List<TrackPiece> findTrackPiecePathBetweenTwoPoints(Point p1, Point p2, DirectionClass.Direction direction1, DirectionClass.Direction direction2) {
-        List<TrackPiece> resultTrackPieces = findTrackPiecePathBetweenTwoPoints(p1, p2);
+    private List<TrackPiece> findTrackPiecePathBetweenTwoPoints(Point p1, Point p2) {
+        List<TrackPiece> resultTrackPieces = getProceduralTrackPiecePathBetweenTwoPoints(p1, p2);
+        if (resultTrackPieces != null)
+            return resultTrackPieces;
+        return getSimpleTrackPiecePathBetweenTwoPoints(p1, p2);
 
         //TODO: check if generated track is valid with the directions
         //TODO: if not then call get getSimpleTrackPiecePathBetweenTwoPoints
 
-        return null;
     }
 
-    private List<TrackPiece> findTrackPiecePathBetweenTwoPoints(Point p1, Point p2) {
+    private List<TrackPiece> getProceduralTrackPiecePathBetweenTwoPoints(Point p1, Point p2) {
         Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] p1: %s, p2: %s", p1, p2));
         if (p1.equals(p2)) {
             Log.d(tag, "Equal points provided");
             return null;
         }
 
-        List<TrackPiece> resultTrackPieces = null;
+        List<TrackPiece> resultTrackPieces;
 
         int x_diff = Math.abs(p2.getX() - p1.getX());
         int y_diff = Math.abs(p2.getY() - p1.getY());
@@ -203,17 +207,13 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
         int new_x = ((p1.getX() + p2.getX()) / 2);
         int new_y = ((p1.getY() + p2.getY()) / 2);
 
-        int x_direction = p1.getX() <= p2.getX() ? 1 : -1;
-        int y_direction = p1.getY() <= p2.getY() ? 1 : -1;
+        int x_direction = Integer.compare(p2.getX(), p1.getX());
+        int y_direction = Integer.compare(p2.getY(), p1.getY());
 
         boolean xy_direction = p1.getDirection() != null && p2.getDirection() != null ? DirectionClass.isClockwise(p1.getDirection(), p2.getDirection()) : x_direction * y_direction == 1;
 
         if (x_diff == 0 || y_diff == 0) {
-            TrackPiece straightTrackPiece = Helper.getStraightTrackPieceByLength(x_diff + y_diff);
-            Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] straightTrackPiece of length: %d", x_diff + y_diff));
-            if (straightTrackPiece != null) {
-                return Collections.singletonList(straightTrackPiece);
-            }
+            return getSimpleStraight(p1, p2);
         } else if (x_diff == y_diff) {
             TrackPiece curvedTrackPiece = Helper.getCurvedTrackPieceByLength(x_diff, xy_direction);
             Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] curvedTrackPiece of length: %d, xy_direction: %s", x_diff, xy_direction));
@@ -228,15 +228,29 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
             }
         }
 
-        Point newPoint = new Point(new_x, new_y, false);
-        Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] newPoint: %s", newPoint));
+        Point newPoint = new Point(new_x, new_y);
+        newPoint.setPrevious(p1);
+        newPoint.setNext(p2);
+        Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] newPoint: %s, direction: %s", newPoint, newPoint.getDirection()));
 
-        if (!(canInputCurvedTrackPiece(p1, newPoint) && canInputCurvedTrackPiece(p2, newPoint)) && (x_diff != 0 && y_diff != 0)) {
+        if (!(canInputCurvedTrackPiece(p1, newPoint) && canInputCurvedTrackPiece(newPoint, p2))) {
             Log.d(tag, "[findTrackPiecePathBetweenTwoPoints] New point is invalid because CurvedPiece cannot be inputted");
-            new_x = p1.getX() + Consts.MIN_LENGTH_OF_CURVED_TRACK_PIECE * x_direction;
-            newPoint.setX(new_x);
-            newPoint.setY(p2.getY());
+
+            if (DirectionClass.isXAxis(p1.getDirection())) {
+                new_y = p1.getY() + Consts.MIN_LENGTH_OF_CURVED_TRACK_PIECE * y_direction;
+                newPoint.setX(p2.getX());
+                newPoint.setY(new_y);
+            } else {
+                new_x = p1.getX() + Consts.MIN_LENGTH_OF_CURVED_TRACK_PIECE * x_direction;
+                newPoint.setX(new_x);
+                newPoint.setY(p2.getY());
+            }
             Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] after update newPoint: %s", newPoint));
+        }
+
+        newPoint.minimisePointDirections();
+        if (newPoint.getDirection() == null) {
+            Log.d(tag, String.format("[] newPoint: %s has null direction!!! previous: %s, next: %s", newPoint, newPoint.getPrevious(), newPoint.getNext()));
         }
 
         if (newPoint.equals(p1) || newPoint.equals(p2)) {
@@ -244,23 +258,23 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
             return null;
         }
 
-        List<TrackPiece> trackPiecesToNewPoint = findTrackPiecePathBetweenTwoPoints(p1, newPoint);
+        List<TrackPiece> trackPiecesToNewPoint = getProceduralTrackPiecePathBetweenTwoPoints(p1, newPoint);
         if (trackPiecesToNewPoint == null)
             return null;
 
-        List<TrackPiece> trackPiecesFromNewPoint = findTrackPiecePathBetweenTwoPoints(newPoint, p2);
+        List<TrackPiece> trackPiecesFromNewPoint = getProceduralTrackPiecePathBetweenTwoPoints(newPoint, p2);
         if (trackPiecesFromNewPoint == null)
             return null;
 
-        resultTrackPieces = Stream.concat(trackPiecesToNewPoint.stream(), trackPiecesFromNewPoint.stream()).collect(Collectors.toList());
+        resultTrackPieces = TrackPiece.joinTwoLists(trackPiecesToNewPoint, trackPiecesFromNewPoint);
         Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] startPoint: %s, endPoint: %s, resultTrackPieces: %s", p1, p2, resultTrackPieces));
         if (!validateCurrentTrack(p1, p2, resultTrackPieces)) {
-            resultTrackPieces = rotateCurrentTrack(p1, p2, trackPiecesToNewPoint, trackPiecesFromNewPoint);
-            Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] startPoint: %s, endPoint: %s, VALIDATED resultTrackPieces: %s", p1, p2, resultTrackPieces));
+            Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] TRACK IS INALID resultTrackPieces: %s", resultTrackPieces));
+            return null;
+            //resultTrackPieces = rotateCurrentTrack(p1, p2, trackPiecesToNewPoint, trackPiecesFromNewPoint);
+            //Log.d(tag, String.format("[findTrackPiecePathBetweenTwoPoints] startPoint: %s, endPoint: %s, VALIDATED resultTrackPieces: %s", p1, p2, resultTrackPieces));
         }
         return resultTrackPieces;
-
-        /*return new ArrayList<>();*/
 
     }
 
@@ -298,10 +312,7 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
 
         int min_x_y = Point.min(p1, p2);
 
-        int x_new_1;
-        int y_new_1;
-        int x_new_2;
-        int y_new_2;
+        int x_new_1, y_new_1, x_new_2, y_new_2;
 
         int maxCurvedTrackPieceLength = min_x_y >= Consts.MAX_LENGTH_OF_CURVED_TRACK_PIECE ? Consts.MAX_LENGTH_OF_CURVED_TRACK_PIECE : Consts.MIN_LENGTH_OF_CURVED_TRACK_PIECE;
 
@@ -326,9 +337,9 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
 
         Log.d(tag, String.format("[getSimpleTurnOnly] new1: %s, new_2: %s", new_1, new_2));
 
-        List<TrackPiece> trackPieces1 = findTrackPiecePathBetweenTwoPoints(p1, new_1);
-        List<TrackPiece> trackPieces2 = findTrackPiecePathBetweenTwoPoints(new_1, new_2);
-        List<TrackPiece> trackPieces3 = findTrackPiecePathBetweenTwoPoints(new_2, p2);
+        List<TrackPiece> trackPieces1 = getProceduralTrackPiecePathBetweenTwoPoints(p1, new_1);
+        List<TrackPiece> trackPieces2 = getProceduralTrackPiecePathBetweenTwoPoints(new_1, new_2);
+        List<TrackPiece> trackPieces3 = getProceduralTrackPiecePathBetweenTwoPoints(new_2, p2);
 
         Log.d(tag, String.format("[getSimpleTurnOnly] trackPieces1: %s, trackPieces2: %s, trackPieces3: %s", trackPieces1, trackPieces2, trackPieces3));
 
@@ -402,7 +413,7 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
         int y_diff = Math.abs(p2.getY() - p1.getY());
 
         TrackPiece straightTrackPiece = Helper.getStraightTrackPieceByLength(x_diff + y_diff);
-        Log.d(tag, String.format("[getSimpleStraight] straightTrackPiece of length: %d", x_diff + y_diff));
+        Log.d(tag, String.format("[getSimpleStraight] straightTrackPiece: %s, of length: %d", straightTrackPiece, x_diff + y_diff));
         if (straightTrackPiece != null) {
             return Collections.singletonList(straightTrackPiece);
         }
@@ -441,12 +452,33 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
         int x_diff = Math.abs(p2.getX() - p1.getX());
         int y_diff = Math.abs(p2.getY() - p1.getY());
 
-        int x_direction = p1.getX() <= p2.getX() ? 1 : -1;
-        int y_direction = p1.getY() <= p2.getY() ? 1 : -1;
+        int x_direction = Integer.compare(p2.getX(), p1.getX());
+        int y_direction = Integer.compare(p2.getY(), p1.getY());
 
         for (int length : curvedPiecesLength) {
             if ((x_diff == length && y_diff > length) || (x_diff > length && y_diff == length)) {
-                Point newPoint = new Point(p1.getX() + length * x_direction, p1.getY() + length * y_direction);
+
+                int x_new, y_new;
+
+                if (x_diff == length) {
+                   if (DirectionClass.isYAxis(p1.getDirection())) {
+                       x_new = p1.getX();
+                       y_new = p2.getY() - length * y_direction;
+                   } else {
+                       x_new = p2.getX();
+                       y_new = p1.getY() + length * y_direction;
+                   }
+                } else {
+                    if (DirectionClass.isXAxis(p1.getDirection())) {
+                        x_new = p2.getX() - length * x_direction;
+                        y_new = p1.getY();
+                    } else {
+                        x_new = p1.getX() + length * x_direction;
+                        y_new = p2.getY();
+                    }
+                }
+
+                Point newPoint = new Point(x_new, y_new, p1, p1);
                 Log.d(tag, String.format("[tryInputCurvedTrackPiece] returning newPoint: %s", newPoint));
                 return newPoint;
             }
@@ -475,11 +507,13 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
             trackPieces = Stream.concat(trackPiecesToNewPoint.stream(), trackPiecesFromNewPoint.stream()).collect(Collectors.toList());
         }*/
 
-        Log.d(tag, String.format("[validateCurrentTrack] p1: %s, p2: %s, trackPieces: %s", p1, p2, trackPieces));
+        Log.d(tag, String.format("[validateCurrentTrack] p1: %s, p1.direction: %s, p2: %s, p2.direction: %s, trackPieces: %s", p1, p1.getDirection(), p2, p2.getDirection(), trackPieces));
 
         List<Double> angles = new ArrayList<>();
+        angles.add(DirectionClass.getDirectionAsAngle(p1.getDirection()));
+        double targetAngle = DirectionClass.getDirectionAsAngle(p2.getDirection());
 
-        if (allDirections) {
+/*        if (allDirections) {
             angles.add((double) 0);
             angles.add(Math.PI * (1 / 2.f));
             angles.add(Math.PI);
@@ -496,7 +530,7 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
             } else {
                 angles.add(Math.PI * (3 / 2.f));
             }
-        }
+        }*/
 
         Log.d(tag, String.format("[validateCurrentTrack] angles: %s", angles));
 
@@ -511,7 +545,7 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
                 Log.d(tag, String.format("[validateCurrentTrack] trackPiece: %s, p: (%.3f, %.3f), x: %.3f, y: %.3f, angle: %.3f", trackPiece, x, y, x, y, angle));
             }
             Log.d(tag, String.format("[validateCurrentTrack] trackPieces: %s, x: %.3f, x_end: %d, y: %.3f, y_end: %d, angle: %.3f", trackPieces, x, p2.getX(), y, p2.getY(), angle));
-            if (Helper.compareTwoDoubles(x, p2.getX()) && Helper.compareTwoDoubles(y, p2.getY())) {
+            if (Helper.compareTwoDoubles(x, p2.getX()) && Helper.compareTwoDoubles(y, p2.getY()) && DirectionClass.compareDirectionWithAngle(p2.getDirection(), angle)) {
                 Log.d(tag, "[validateCurrentTrack] Returning true");
                 return true;
             }

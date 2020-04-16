@@ -221,6 +221,10 @@ public abstract class TrackGeneratorImpl implements TrackGenerator {
 
     @Override
     public boolean validateTrack(Track track) {
+        return validateTrack(track, false);
+    }
+
+    public boolean validateTrack(Track track, boolean verbose) {
         if (track == null || track.getTrackPieces() == null) {
             return false;
         }
@@ -239,6 +243,9 @@ public abstract class TrackGeneratorImpl implements TrackGenerator {
                 angle += 2 * trackPiece.getAngle();
             }
             levels += trackPiece.getLevels();
+            if (verbose) {
+                Log.d(tag, String.format("[validateTrack] (%.3f, %.3f) x: %.3f, y: %.3f, angle: %.3f, levels: %d", x, y, x, y, angle, levels));
+            }
         }
         angleInRadians = angle / Math.PI;
         angle = angleInRadians - (int) angleInRadians;

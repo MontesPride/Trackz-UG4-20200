@@ -29,7 +29,7 @@ public class Point {
         this(x, y, true);
     }
 
-    public Point(int x, int y, Point next, Point previous) {
+    public Point(int x, int y, Point previous, Point next) {
         this.x = x;
         this.y = y;
 
@@ -37,9 +37,21 @@ public class Point {
         this.directionsIn = EnumSet.allOf(DirectionClass.Direction.class);
         this.directionsOut = EnumSet.allOf(DirectionClass.Direction.class);
 
-        this.next = next;
         this.previous = previous;
-        minimiseDirections();
+        this.next = next;
+        this.minimisePointDirections();
+    }
+
+    public Point(int x, int y, Set<DirectionClass.Direction> directions) {
+        this.x = x;
+        this.y = y;
+
+        this.directions = directions;
+        this.directionsIn = directions;
+        this.directionsOut = directions;
+
+        this.next = null;
+        this.previous = null;
     }
 
     public Point(int x, int y, DirectionClass.Direction direction) {
@@ -184,6 +196,14 @@ public class Point {
         minimiseDirections(this.directions, this.directionsOut);
 
         return inSizeBefore == this.directionsIn.size() && outSizeBefore == this.directionsOut.size();
+    }
+
+    public void minimisePointDirections() {
+
+        while (!this.minimiseInOutDirections());
+
+        while (!this.minimiseDirections());
+
     }
 
     public void minimiseDirections(Set<DirectionClass.Direction> thisPointDirections, Set<DirectionClass.Direction> otherPointDirections) {

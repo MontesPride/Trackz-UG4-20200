@@ -1,5 +1,7 @@
 package com.montes.trackz.generators.procedural;
 
+import com.montes.trackz.util.Helper;
+
 public class DirectionClass {
 
     public enum Direction {
@@ -57,6 +59,28 @@ public class DirectionClass {
         if (direction == Direction.DOWN)
             return -1;
         throw new RuntimeException(String.format("[getYDirectionAsInt] invalid direction provided: %s", direction));
+    }
+
+    public static double getDirectionAsAngle(Direction direction) {
+        switch (direction) {
+            case RIGHT:
+                return 0;
+            case UP:
+                return Math.PI * (1 / 2.f);
+            case LEFT:
+                return Math.PI;
+            case DOWN:
+                return Math.PI * (3 / 2.f);
+            default:
+                throw new RuntimeException(String.format("[getDirectionAsAngle] WTF! unexpected direction encountered: %s", direction));
+        }
+    }
+
+    public static boolean compareDirectionWithAngle(Direction direction, double angle) {
+        angle = angle % (2 * Math.PI);
+        if (angle < 0)
+            angle += 2 * Math.PI;
+        return Helper.compareTwoDoubles(getDirectionAsAngle(direction), angle);
     }
 
     public static boolean isXAxis(Direction direction) {
