@@ -26,7 +26,11 @@ public class DirectionClass {
         return (direction1 == Direction.RIGHT && direction2 == Direction.UP) ||
                 (direction1 == Direction.RIGHT && direction2 == Direction.DOWN) ||
                 (direction1 == Direction.LEFT && direction2 == Direction.UP) ||
-                (direction1 == Direction.LEFT && direction2 == Direction.DOWN);
+                (direction1 == Direction.LEFT && direction2 == Direction.DOWN) ||
+                (direction2 == Direction.RIGHT && direction1 == Direction.UP) ||
+                (direction2 == Direction.RIGHT && direction1 == Direction.DOWN) ||
+                (direction2 == Direction.LEFT && direction1 == Direction.UP) ||
+                (direction2 == Direction.LEFT && direction1 == Direction.DOWN);
     }
 
     public static Direction getXDirection(int direction) {
@@ -92,10 +96,10 @@ public class DirectionClass {
     }
 
     public static boolean isClockwise(Direction direction1, Direction direction2) {
-        return (direction1 == Direction.RIGHT && direction2 == Direction.UP) ||
-                (direction1 == Direction.UP && direction2 == Direction.LEFT) ||
-                (direction1 == Direction.LEFT && direction2 == Direction.DOWN) ||
-                (direction1 == Direction.DOWN && direction2 == Direction.RIGHT);
+        return (direction1 == Direction.RIGHT && direction2 == Direction.DOWN) ||
+                (direction1 == Direction.UP && direction2 == Direction.RIGHT) ||
+                (direction1 == Direction.LEFT && direction2 == Direction.UP) ||
+                (direction1 == Direction.DOWN && direction2 == Direction.LEFT);
     }
 
 }

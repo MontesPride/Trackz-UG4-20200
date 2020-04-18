@@ -15,7 +15,7 @@ public abstract class TrackPieceCurved extends TrackPiece {
 
     public TrackPieceCurved(String id, String name, double length, double angle, boolean clockwise) {
         super(id, name, length);
-        this.angle = clockwise ? angle : -angle;
+        this.angle = clockwise ? -angle : angle;
     }
 
     @Override
@@ -31,6 +31,6 @@ public abstract class TrackPieceCurved extends TrackPiece {
     @NonNull
     @Override
     public String toString() {
-        return String.format("%s%c", this.getId(), this.angle >= 0 ? '>' : '<');
+        return String.format("%s%c", this.getId(), this.angle <= 0 ? 'Z' : 'P');
     }
 }

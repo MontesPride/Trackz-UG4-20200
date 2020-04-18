@@ -154,4 +154,84 @@ public class TestTrackz {
         return points;
     }
 
+    public static List<Point> getProceduralPointList3() {
+        /*Point(0, 0), Point(-6, 0), Point(0, -10), Point(-12, -2), Point(-10, -6), Point(10, 6), Point(-6, 10), Point(6, 12)*/
+        Point p1 = new Point(0, 0);
+        Point p2 = new Point(-6, 0);
+        Point p3 = new Point(0, -10);
+        Point p4 = new Point(-12, -2);
+        Point p5 = new Point(-10, -6);
+        Point p6 = new Point(10, 6);
+        Point p7 = new Point(-6, 10);
+        Point p8 = new Point(6, 12);
+        List<Point> points = new ArrayList<>();
+        points.add(p1);
+        points.add(p2);
+        points.add(p3);
+        points.add(p4);
+        points.add(p5);
+        points.add(p6);
+        points.add(p7);
+        points.add(p8);
+
+        return points;
+    }
+
+    public static List<Point> getProceduralPointList4() {
+        /*Point(-12, -6), Point(2, 8), Point(-2, 12), Point(-4, -6), Point(0, 10), Point(8, 2), Point(10, -6), Point(8, -10), Point(-2, 8), Point(12, 4), Point(-4, 12)*/
+        Point p1 = new Point(-12, -6);
+        Point p2 = new Point(2, 8);
+        Point p3 = new Point(-2, 12);
+        Point p4 = new Point(-4, -6);
+        Point p5 = new Point(0, 10);
+        Point p6 = new Point(8, 2);
+        Point p7 = new Point(10, -6);
+        Point p8 = new Point(8, -10);
+        Point p9 = new Point(-2, 8);
+        Point p10 = new Point(12, 4);
+        Point p11 = new Point(-4, 12);
+        List<Point> points = new ArrayList<>();
+        points.add(p1);
+        points.add(p2);
+        points.add(p3);
+        points.add(p4);
+        points.add(p5);
+        points.add(p6);
+        points.add(p7);
+        points.add(p8);
+        points.add(p9);
+        points.add(p10);
+        points.add(p11);
+
+        return points;
+    }
+
+    public static List<Point> getProceduralPointList5() {
+        /*Point(10, -6), Point(4, 10), Point(0, 10), Point(0, -12), Point(10, 0), Point(6, 8), Point(-2, 8), Point(4, 10), Point(-2, 6), Point(-2, 8), Point(8, 6)*/
+        Point p1 = new Point(10, -6);
+        Point p2 = new Point(4, 10);
+        Point p3 = new Point(0, 10);
+        Point p4 = new Point(0, -12);
+        Point p5 = new Point(10, 0);
+        Point p6 = new Point(6, 8);
+        Point p7 = new Point(-2, 8);
+        Point p8 = new Point(4, 10);
+        Point p9 = new Point(-2, 6);
+        Point p10 = new Point(-2, 8);
+        Point p11 = new Point(8, 6);
+        List<Point> points = new ArrayList<>();
+        points.add(p1);
+        points.add(p2);
+        points.add(p3);
+        points.add(p4);
+        points.add(p5);
+        points.add(p6);
+        points.add(p7);
+        points.add(p8);
+        points.add(p9);
+        points.add(p10);
+        points.add(p11);
+
+        return points;
+    }
 }
