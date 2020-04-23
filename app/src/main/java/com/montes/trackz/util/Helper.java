@@ -245,4 +245,8 @@ public class Helper {
         }
     }
 
+    public static boolean upOrDown(double angle, double nextAngle) {
+        return angle > nextAngle;
+    }
+
 }

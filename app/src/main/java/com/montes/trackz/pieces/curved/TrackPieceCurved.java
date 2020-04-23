@@ -1,6 +1,7 @@
 package com.montes.trackz.pieces.curved;
 
 import android.graphics.Point;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.jjoe64.graphview.series.DataPoint;
@@ -61,26 +62,27 @@ public abstract class TrackPieceCurved extends TrackPiece {
         double x_end = x + this.getLength() * Math.cos(angle + this.getAngle());
         double y_end = y + this.getLength() * Math.sin(angle + this.getAngle());
 
-        DataPoint circleCenter = getCircleCenter(x, y, x_end, y_end, angle);
+        DataPoint circleCenter = getCircleCenter(this, x, y, x_end, y_end, angle);
         Log.d(tag, String.format("[getTrackPieceAsCurve] x_center: %.3f, y_center: %.3f", circleCenter.getX(), circleCenter.getY()));
+        
+        double nextAngle = angle + 2 * this.getAngle();
+        Log.d(tag, String.format("[getTrackPieceAsCurve] angle: %.3f, nextAngle: %.3f", angle, nextAngle));
 
-        double x_start;
-        double y_start;
+        boolean upOrDown = Helper.upOrDown(angle, nextAngle);
 
-        if (x <= x_end) {
-            x_start = x;
-            y_start = y;
-        } else {
-            x_start = x_end;
-            x_end = x;
-            y_start = y_end;
-            y_end = y;
+        double x_temp = x, x_temp_end = x_end;
+        x_end = Math.max(x_temp, x_temp_end);
+        x = Math.min(x_temp, x_temp_end);
+        if (!Helper.compareTwoDoubles(x_end, x_temp_end))
+            upOrDown = !upOrDown;
+
+        LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>();
+        while (x <= x_end) {
+            y = getY(x, this.getStraightLength(), circleCenter.getX(), circleCenter.getY(), upOrDown);
+            x += Consts.SERIES_STEP;
+            lineGraphSeries.appendData(new DataPoint(x, y), true, Consts.SERIES_MAX_COUNT);
         }
 
-        LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(x_start, y_start),
-                new DataPoint(x_end, y_end)
-        });
         lineGraphSeries.setColor(levels == 0 ? this.getColor() : this.colorUp());
         lineGraphSeries.setThickness(Consts.LINE_THICKNESS);
         lineGraphSeries.setAnimated(true);
@@ -88,25 +90,22 @@ public abstract class TrackPieceCurved extends TrackPiece {
         return lineGraphSeries;
     }
 
-    private DataPoint getCircleCenter(double x1, double y1, double x2, double y2, double angle) {
+    private static DataPoint getCircleCenter(TrackPieceCurved trackPieceCurved, double x1, double y1, double x2, double y2, double angle) {
         double x_center;
         double y_center;
         //Log.d(tag, String.format("[getCircleCenter] x1: %.3f, y1: %.3f, x2: %.3f, y2: %.3f", x1, y1, x2, y2));
 
-        if (Helper.compareDoubleAndInteger(x1, (int) x1) || Helper.compareDoubleAndInteger(y1, (int) y1)) {
-            Log.d(tag, String.format("[getCircleCenter] x1: %.3f, y1: %.3f", x1, y1));
-        } else {
-            Log.d(tag, String.format("[getCircleCenter] x2: %.3f, y2: %.3f", x2, y2));
+        if (!(Helper.compareDoubleAndInteger(x1, (int) x1) || Helper.compareDoubleAndInteger(y1, (int) y1))) {
             x1 = x2;
             y1 = y2;
-            angle += 2 * this.getAngle();
+            angle += 2 * trackPieceCurved.getAngle();
         }
 
-        double x_middle = x1 + this.getLength() * Math.cos(angle + this.getAngle());
-        double y_middle = y1 + this.getLength() * Math.sin(angle + this.getAngle());
-        angle += 2 * this.getAngle();
-        x2 = x_middle + this.getLength() * Math.cos(angle + this.getAngle());
-        y2 = y_middle  + this.getLength() * Math.sin(angle + this.getAngle());
+        double x_middle = x1 + trackPieceCurved.getLength() * Math.cos(angle + trackPieceCurved.getAngle());
+        double y_middle = y1 + trackPieceCurved.getLength() * Math.sin(angle + trackPieceCurved.getAngle());
+        angle += 2 * trackPieceCurved.getAngle();
+        x2 = x_middle + trackPieceCurved.getLength() * Math.cos(angle + trackPieceCurved.getAngle());
+        y2 = y_middle  + trackPieceCurved.getLength() * Math.sin(angle + trackPieceCurved.getAngle());
         double x_avg = (x1 + x2) / 2;
         double y_avg = (y1 + y2) / 2;
         if (x1 <= x2) {
@@ -153,12 +152,15 @@ public abstract class TrackPieceCurved extends TrackPiece {
         return new DataPoint(x_center, y_center);
     }
 
-    private double getY(double x, double r, double x_center, double y_center, boolean upOrDown) {
+    private static double getY(double x, double r, double x_center, double y_center, boolean upOrDown) {
         //(x_center - x) ^ 2 + (y_center - y) ^ 2 = r^2
         //(y_center - y)^2 = r^2 - (x_center - x)^2
         //(y_center - y) = sqrt(r^2 - (x_center - x)^2)
         //y = y_center +- sqrt(r^2 - (x_center - x)^2)
-        double sqrt = Math.sqrt(r*r - (x_center - x)*(x_center - x));
+        double sqrt_squared = r*r - (x_center - x)*(x_center - x);
+        if (sqrt_squared < 0)
+            sqrt_squared *= -1;
+        double sqrt = Math.sqrt(sqrt_squared);
         return y_center + sqrt * (upOrDown ? 1 : -1);
     }
 
