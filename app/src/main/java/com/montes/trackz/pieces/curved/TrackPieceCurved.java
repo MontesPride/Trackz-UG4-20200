@@ -153,4 +153,13 @@ public abstract class TrackPieceCurved extends TrackPiece {
         return new DataPoint(x_center, y_center);
     }
 
+    private double getY(double x, double r, double x_center, double y_center, boolean upOrDown) {
+        //(x_center - x) ^ 2 + (y_center - y) ^ 2 = r^2
+        //(y_center - y)^2 = r^2 - (x_center - x)^2
+        //(y_center - y) = sqrt(r^2 - (x_center - x)^2)
+        //y = y_center +- sqrt(r^2 - (x_center - x)^2)
+        double sqrt = Math.sqrt(r*r - (x_center - x)*(x_center - x));
+        return y_center + sqrt * (upOrDown ? 1 : -1);
+    }
+
 }
