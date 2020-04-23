@@ -17,6 +17,8 @@ public class Consts {
     public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_N = 0;
 
     public static final int FIELD_SIZE = 15;
+    public static final int FIELD_SIZE_MIN = 5;
+    public static final int FIELD_SIZE_MAX = 40;
     public static final int NUM_OF_GENERATED_POINTS_MIN = 8;
     public static final int NUM_OF_GENERATED_POINTS_MAX = 12;
 

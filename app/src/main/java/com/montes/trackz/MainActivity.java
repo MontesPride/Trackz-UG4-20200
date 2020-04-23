@@ -2,10 +2,12 @@ package com.montes.trackz;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
@@ -22,10 +24,10 @@ import com.montes.trackz.generators.procedural.ProceduralTrackGenerator;
 import com.montes.trackz.tracks.Track;
 import com.montes.trackz.tracks.TrackImpl;
 import com.montes.trackz.util.Consts;
-import com.montes.trackz.util.StaticDataHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String tag = "MainActivity";
     private List<TrackGenerator> trackGenerators;
     private GraphView graphView;
+    private SharedPreferences preferences;
 
     public List<TrackGenerator> getTrackGenerators() {
         if (this.trackGenerators == null)
@@ -67,11 +70,25 @@ public class MainActivity extends AppCompatActivity {
         setTrackGenerators(trackGenerators);
     }
 
+    public SharedPreferences getPreferences() {
+        if (this.preferences == null)
+            this.preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        return this.preferences;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(tag, "[onCreate] Start");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        boolean showTrackscore = preferences.getBoolean(getResources().getString(R.string.show_track_score), true);
+        String fieldSize = preferences.getString(getResources().getString(R.string.track_size), Integer.toString(Consts.FIELD_SIZE));
+        preferences.edit().putBoolean(getResources().getString(R.string.show_track_score), showTrackscore).putString(getResources().getString(R.string.track_size), fieldSize).apply();
+        for (Map.Entry mapEntry : preferences.getAll().entrySet()) {
+            Log.d(tag, String.format("[onCreate] preference mapEntry: %s, value: %s", mapEntry.getKey(), mapEntry.getValue()));
+        }
+
         setTrackGenerator(new ProceduralTrackGenerator(this.getApplicationContext()));
         this.graphView = findViewById(R.id.graph);
         this.graphView.getGridLabelRenderer().setHorizontalLabelsVisible(false);
@@ -202,9 +219,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setTrackScore(int trackScore) {
-        if (!StaticDataHolder.getShowTrackScore())
-            return;
         TextView scoreView = findViewById(R.id.scoreView);
+        if (!this.getPreferences().getBoolean(getResources().getString(R.string.show_track_score), true)) {
+            scoreView.setText("");
+            return;
+        }
+
         scoreView.setText(String.format("Score: %d/10", trackScore));
         scoreView.setTextSize(Consts.TEXT_BASE + trackScore * Consts.TEXT_SCALE);
         if (trackScore == 10) {
@@ -215,10 +235,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setTrackString(String trackString) {
-        if (!StaticDataHolder.getShowTrackString())
-            return;
         TextView trackStringView = findViewById(R.id.trackStringView);
-        trackStringView.setText(trackString);
+        if (!this.getPreferences().getBoolean(getResources().getString(R.string.show_track_string), false)) {
+            trackStringView.setText("");
+        } else {
+            trackStringView.setText(trackString);
+        }
     }
 
 }

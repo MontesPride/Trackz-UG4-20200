@@ -3,6 +3,7 @@ package com.montes.trackz.generators.procedural;
 import android.content.Context;
 import android.util.Log;
 
+import com.montes.trackz.R;
 import com.montes.trackz.generators.TrackGeneratorImpl;
 import com.montes.trackz.pieces.TrackPiece;
 import com.montes.trackz.pieces.straight.TrackPieceD;
@@ -11,7 +12,6 @@ import com.montes.trackz.tracks.Track;
 import com.montes.trackz.tracks.TrackImpl;
 import com.montes.trackz.util.Consts;
 import com.montes.trackz.util.Helper;
-import com.montes.trackz.util.StaticDataHolder;
 import com.montes.trackz.util.TestTrackz;
 
 import java.util.ArrayList;
@@ -35,17 +35,24 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
     public ProceduralTrackGenerator(Context context) {
         super(context);
 
-        this.fieldSize = Integer.parseInt(StaticDataHolder.getFieldSize()) * Consts.UNIT;
+        this.fieldSize = Integer.parseInt(this.getPreferences().getString(context.getResources().getString(R.string.track_size), Integer.toString(Consts.FIELD_SIZE))) * Consts.UNIT;
         this.numOfGeneratedPointsMin = Consts.NUM_OF_GENERATED_POINTS_MIN;
         this.numOfGeneratedPointsMax = Consts.NUM_OF_GENERATED_POINTS_MAX;
 
         this.randomGenerator = new Random();
     }
 
+    private void setFieldSize() {
+        int fieldsSize = Math.min(Consts.FIELD_SIZE_MAX, Math.max(Consts.FIELD_SIZE_MIN, Integer.parseInt(this.getPreferences().getString(this.getConext().getResources().getString(R.string.track_size), Integer.toString(Consts.FIELD_SIZE))))) * Consts.UNIT;
+        Log.d(tag, String.format("[setFieldSize] fieldSize: %d", fieldsSize));
+        this.fieldSize = fieldsSize;
+    }
+
     @Override
     public Track generateTrack() {
 
         Log.d(tag, String.format("[generateTrack] Start, trackPiecesDataHolder: %s", this.getTrackPiecesDataHolder()));
+        setFieldSize();
 
         //generatedPoints = testPoints();
         List<TrackPiece> trackPieces = null;

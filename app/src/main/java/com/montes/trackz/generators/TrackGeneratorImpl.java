@@ -1,6 +1,8 @@
 package com.montes.trackz.generators;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.montes.trackz.pieces.TrackPiece;
@@ -21,7 +23,9 @@ import java.util.Random;
 public abstract class TrackGeneratorImpl implements TrackGenerator {
     private static final String tag = "TrackGeneratorImpl";
 
+    private Context conext;
     private TrackPiecesDataHolder trackPiecesDataHolder;
+    private SharedPreferences preferences;
     private List<Track> generatedTracks;
     private int trackPointer;
     private Map<String, Integer> trackPiecesData;
@@ -36,12 +40,22 @@ public abstract class TrackGeneratorImpl implements TrackGenerator {
     private int numberOfCurvedTrackPieces;
     private int numberOfBridgeTrackPieces;
 
+    public Context getConext() {
+        return this.conext;
+    }
+
     public TrackPiecesDataHolder getTrackPiecesDataHolder() {
         return this.trackPiecesDataHolder;
     }
 
     public void setTrackPiecesDataHolder(TrackPiecesDataHolder trackPiecesDataHolder) {
         this.trackPiecesDataHolder = trackPiecesDataHolder;
+    }
+
+    public SharedPreferences getPreferences() {
+        if (this.preferences == null)
+            this.preferences = PreferenceManager.getDefaultSharedPreferences(this.conext);
+        return this.preferences;
     }
 
     public List<Track> getGeneratedTracks() {
@@ -134,6 +148,7 @@ public abstract class TrackGeneratorImpl implements TrackGenerator {
 
     public TrackGeneratorImpl(Context context) {
         Log.d(tag, String.format("[TrackGeneratorImpl] context: %s", context));
+        this.conext = context;
         this.trackPiecesDataHolder = new TrackPiecesDataHolder(context);
         parseTrackPiecesData();
     }

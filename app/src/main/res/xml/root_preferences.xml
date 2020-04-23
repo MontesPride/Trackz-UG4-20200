@@ -8,17 +8,17 @@
             app:defaultValue="3"
             app:entries="@array/track_size_names"
             app:entryValues="@array/track_size_values"
-            app:key="size"
+            app:key="@string/track_size"
             app:title="@string/track_size"
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
-            app:key="show_track_string"
+            app:key="@string/show_track_string"
             app:summary="@string/show_track_string_details"
             app:title="@string/show_track_string" />
 
         <SwitchPreferenceCompat
-            app:key="show_track_score"
+            app:key="@string/show_track_score"
             app:title="@string/show_track_score" />
 
     </PreferenceCategory>
