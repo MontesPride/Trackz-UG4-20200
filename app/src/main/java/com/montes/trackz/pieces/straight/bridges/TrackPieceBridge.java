@@ -15,8 +15,18 @@ public abstract class TrackPieceBridge extends TrackPieceStraight {
         this.levels = levels;
     }
 
+    TrackPieceBridge(String id, String name, double length, int levels, int color) {
+        super(id, name, length, color);
+        this.levels = levels;
+    }
+
     TrackPieceBridge(String id, String name, double length, int levels, boolean upOrDown) {
         super(id, name, length);
+        this.levels = upOrDown ? levels : -levels;
+    }
+
+    TrackPieceBridge(String id, String name, double length, int levels, boolean upOrDown, int color) {
+        super(id, name, length, color);
         this.levels = upOrDown ? levels : -levels;
     }
 

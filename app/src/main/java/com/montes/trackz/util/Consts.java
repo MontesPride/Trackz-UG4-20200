@@ -16,7 +16,7 @@ public class Consts {
     public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_E = 12;
     public static final int DEFAULT_NUMBER_OF_TRACK_PIECE_N = 0;
 
-    public static final int FIELD_SIZE = 15;
+    public static final int FIELD_SIZE = 10;
     public static final int NUM_OF_GENERATED_POINTS_MIN = 8;
     public static final int NUM_OF_GENERATED_POINTS_MAX = 12;
 
@@ -30,5 +30,16 @@ public class Consts {
 
     public static final int MIN_DOUBLE_TURN_RADIUS = 4;
     public static final int MAX_DOUBLE_TURN_RADIUS = 8;
+
+    public static final int COLOR_ALPHA = 0xFF;
+    public static final int COLOR_UPDATE = 0x11;
+    public static final int LINE_THICKNESS = 30;
+
+    public static final double VIEWPORT_SCALE = 1.2;
+    public static final double VIEWPORT_MARGIN = FIELD_SIZE / 5.f;
+
+    public static final int SERIES_MAX_COUNT = 10000;
+    public static final double SERIES_STEP = 0.01;
+    public static final double SERIES_ANGLE = 0.1;
 
 }

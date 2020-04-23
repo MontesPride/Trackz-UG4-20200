@@ -46,9 +46,16 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
 
         //generatedPoints = testPoints();
         List<TrackPiece> trackPieces = null;
+        Point startingPoint = null;
         boolean finishedTrack = false;
+        int x_min = Integer.MAX_VALUE, x_max = Integer.MIN_VALUE, y_min = Integer.MAX_VALUE, y_max = Integer.MIN_VALUE;
 
         while (!finishedTrack) {
+
+            x_min = Integer.MAX_VALUE;
+            x_max = Integer.MIN_VALUE;
+            y_min = Integer.MAX_VALUE;
+            y_max = Integer.MIN_VALUE;
 
             Log.d(tag, "[generateTrack] Trying to find a new track!");
 
@@ -60,7 +67,9 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
             List<Point> convexPolygon = minimiseDirections(setNextAndPreviousPoints(convexHull.computePolygon()));
             if (!checkDirections(convexPolygon))
                 continue;
+            Log.d(tag, String.format("[generateTrack] numberOfPoints: %d", convexPolygon.size()));
             trackPieces = new ArrayList<>();
+            startingPoint = convexPolygon.get(0);
 
             for (int i = 0; i < convexPolygon.size() - 1; ++i) {
                 Point p1 = convexPolygon.get(i);
@@ -73,6 +82,11 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
                 finishedTrack = i == convexPolygon.size() - 2;
                 Log.d(tag, String.format("[generateTrack] p1: %s, p2: %s, trackPiecePath: %s", p1, p2, trackPiecePath));
                 trackPieces = TrackPiece.joinTwoLists(trackPieces, trackPiecePath);
+
+                x_min = Math.min(x_min, p1.getX());
+                x_max = Math.max(x_max, p1.getX());
+                y_min = Math.min(y_min, p1.getY());
+                y_max = Math.max(y_max, p1.getY());
                 //Log.d(tag, String.format("[generateTrack] isCurrentTrackValidBeforeRotation: %s", validateCurrentTrack(p1, p2, trackPieces, trackPiecePath, true)));
 
                 /*if (!validateCurrentTrack(convexPolygon.get(0), p2, trackPieces, trackPiecePath, true)) {
@@ -92,10 +106,10 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
             }
 
         }
-        Log.d(tag, String.format("[generateTrack] trackPieces: %s", trackPieces));
+        Log.d(tag, String.format("[generateTrack] trackPieces: %s, startingPoint: %s", trackPieces, startingPoint));
         //Log.d(tag, String.format("[generateTrack] isWholeTrackValid: %s", validateCurrentTrack(convexPolygon.get(0), convexPolygon.get(0), trackPieces, true)));
-        TrackImpl track = new TrackImpl(trackPieces);
-        validateTrack(track, true);
+        TrackImpl track = new TrackImpl(trackPieces, startingPoint, new Point(x_min, y_min), new Point(x_max, y_max));
+        validateTrack(track);
         return track;
     }
 

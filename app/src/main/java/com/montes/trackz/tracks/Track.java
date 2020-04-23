@@ -1,5 +1,7 @@
 package com.montes.trackz.tracks;
 
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 import com.montes.trackz.pieces.TrackPiece;
 
 import java.util.List;
@@ -15,5 +17,7 @@ public interface Track {
     String getTrackString();
 
     String getTrackListAsString();
+
+    List<LineGraphSeries<DataPoint>> getTrackAsCurve();
 
 }
