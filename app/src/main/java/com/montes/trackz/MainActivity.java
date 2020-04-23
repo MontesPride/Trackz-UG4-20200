@@ -119,14 +119,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fabGoToInfo = findViewById(R.id.fabInfo);
-        fabGoToInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, InfoActivity.class));
-            }
-        });
-
         Log.d(tag, "[onCreate] End");
     }
 

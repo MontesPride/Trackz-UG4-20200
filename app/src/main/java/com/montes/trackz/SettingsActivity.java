@@ -32,11 +32,4 @@ public class SettingsActivity extends AppCompatActivity {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
         }
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(tag, "[onDestroy] SettingsActivity is onDestroy");
-    }
-
 }

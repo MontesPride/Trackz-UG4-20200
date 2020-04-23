@@ -54,7 +54,7 @@ public abstract class TrackPieceCurved extends TrackPiece {
     @NonNull
     @Override
     public String toString() {
-        return String.format("%s%c", this.getId(), this.angle <= 0 ? 'Z' : 'P');
+        return String.format("%s%c", this.getId(), this.angle <= 0 ? 'R' : 'L');
     }
 
     @Override
