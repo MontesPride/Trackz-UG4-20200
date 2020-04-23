@@ -229,7 +229,7 @@ public class Helper {
     }
 
     public static boolean compareTwoDoubles(double a, double b) {
-        Log.d(tag, String.format("[compareTwoDoubles] a: %.3f, b: %.3f", a, b));
+        //Log.d(tag, String.format("[compareTwoDoubles] a: %.3f, b: %.3f", a, b));
         return Math.abs(a - b) <= Consts.COMPARISON_THRESHOLD;
     }
 

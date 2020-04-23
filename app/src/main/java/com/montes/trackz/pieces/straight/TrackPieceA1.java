@@ -11,7 +11,7 @@ public class TrackPieceA1 extends TrackPieceStraight {
     private static final double staticLength = Consts.UNIT * 2;
     private static final double staticAngle = 0;
     private static final int staticLevels = 0;
-    private static final int staticColor = Color.argb(Consts.COLOR_ALPHA, 0x33, 0xBB, 0x33);
+    private static final int staticColor = Color.argb(Consts.COLOR_ALPHA, 0x36, 0x9C, 0x28);
 
     public TrackPieceA1() {
         super(staticId, staticName, staticLength, staticColor);

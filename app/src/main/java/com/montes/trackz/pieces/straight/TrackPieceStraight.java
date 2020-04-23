@@ -4,6 +4,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.montes.trackz.pieces.TrackPiece;
 import com.montes.trackz.util.Consts;
+import com.montes.trackz.util.Helper;
 
 public abstract class TrackPieceStraight extends TrackPiece {
 
@@ -31,6 +32,19 @@ public abstract class TrackPieceStraight extends TrackPiece {
             x_end = x;
             y_start = y_end;
             y_end = y;
+        }
+
+        if (Helper.compareTwoDoubles(x_start, x_end)) {
+            if (y_start < y_end) {
+                y_start -= Consts.SERIES_DISTANCE;
+                y_end += Consts.SERIES_DISTANCE;
+            } else {
+                y_start += Consts.SERIES_DISTANCE;
+                y_end -= Consts.SERIES_DISTANCE;
+            }
+        } else {
+            x_start += Consts.SERIES_DISTANCE;
+            x_end += Consts.SERIES_DISTANCE;
         }
 
         LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(new DataPoint[] {

@@ -94,7 +94,7 @@ public class TrackImpl implements Track {
         double angle = DirectionClass.getDirectionAsAngle(this.startingPoint.getDirection());
         int levels = 0;
         for (TrackPiece trackPiece : this.trackPieces) {
-            Log.d(tag, String.format("[getTrackAsCurve] (%.3f, %.3f) x: %.3f, y: %.3f, angle: %.3f, levels: %d", x, y, x, y, angle, levels));
+            //Log.d(tag, String.format("[getTrackAsCurve] (%.3f, %.3f) x: %.3f, y: %.3f, angle: %.3f, levels: %d", x, y, x, y, angle, levels));
 
             lineGraphSeriesList.add(trackPiece.getTrackPieceAsCurve(x, y, angle, levels));
 
@@ -105,7 +105,7 @@ public class TrackImpl implements Track {
             }
             levels += trackPiece.getLevels();
         }
-        Log.d(tag, String.format("[getTrackAsCurve] (%.3f, %.3f) x: %.3f, y: %.3f, angle: %.3f, levels: %d", x, y, x, y, angle, levels));
+        //Log.d(tag, String.format("[getTrackAsCurve] (%.3f, %.3f) x: %.3f, y: %.3f, angle: %.3f, levels: %d", x, y, x, y, angle, levels));
         return lineGraphSeriesList;
     }
 

@@ -11,7 +11,7 @@ public class TrackPieceN extends TrackPieceBridge {
     private static final double staticLength = Consts.UNIT * 4;
     private static final double staticAngle = 0;
     private static final int staticLevels = 1;
-    private static final int staticColor = Color.argb(Consts.COLOR_ALPHA, 0x22, 0x22, 0xEE);
+    private static final int staticColor = Color.argb(Consts.COLOR_ALPHA, 0x60, 0x05, 0x6E);
 
     public TrackPieceN() {
         super(staticId, staticName, staticLength, staticLevels, staticColor);

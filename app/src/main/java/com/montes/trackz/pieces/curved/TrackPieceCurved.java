@@ -63,10 +63,10 @@ public abstract class TrackPieceCurved extends TrackPiece {
         double y_end = y + this.getLength() * Math.sin(angle + this.getAngle());
 
         DataPoint circleCenter = getCircleCenter(this, x, y, x_end, y_end, angle);
-        Log.d(tag, String.format("[getTrackPieceAsCurve] x_center: %.3f, y_center: %.3f", circleCenter.getX(), circleCenter.getY()));
-        
+        //Log.d(tag, String.format("[getTrackPieceAsCurve] x_center: %.3f, y_center: %.3f", circleCenter.getX(), circleCenter.getY()));
+
         double nextAngle = angle + 2 * this.getAngle();
-        Log.d(tag, String.format("[getTrackPieceAsCurve] angle: %.3f, nextAngle: %.3f", angle, nextAngle));
+        //Log.d(tag, String.format("[getTrackPieceAsCurve] angle: %.3f, nextAngle: %.3f", angle, nextAngle));
 
         boolean upOrDown = Helper.upOrDown(angle, nextAngle);
 
@@ -77,11 +77,12 @@ public abstract class TrackPieceCurved extends TrackPiece {
             upOrDown = !upOrDown;
 
         LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>();
-        while (x <= x_end) {
+        while (x < x_end) {
             y = getY(x, this.getStraightLength(), circleCenter.getX(), circleCenter.getY(), upOrDown);
-            x += Consts.SERIES_STEP;
             lineGraphSeries.appendData(new DataPoint(x, y), true, Consts.SERIES_MAX_COUNT);
+            x += Consts.SERIES_STEP;
         }
+        lineGraphSeries.appendData(new DataPoint(x_end, getY(x_end, this.getStraightLength(), circleCenter.getX(), circleCenter.getY(), upOrDown)), true, Consts.SERIES_MAX_COUNT);
 
         lineGraphSeries.setColor(levels == 0 ? this.getColor() : this.colorUp());
         lineGraphSeries.setThickness(Consts.LINE_THICKNESS);
@@ -107,7 +108,7 @@ public abstract class TrackPieceCurved extends TrackPiece {
         x2 = x_middle + trackPieceCurved.getLength() * Math.cos(angle + trackPieceCurved.getAngle());
         y2 = y_middle  + trackPieceCurved.getLength() * Math.sin(angle + trackPieceCurved.getAngle());
         double x_avg = (x1 + x2) / 2;
-        double y_avg = (y1 + y2) / 2;
+        //double y_avg = (y1 + y2) / 2;
         if (x1 <= x2) {
             if (y1 <= y2) {
                 if (x_middle >= x_avg) {
