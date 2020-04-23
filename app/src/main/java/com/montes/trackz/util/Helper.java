@@ -229,7 +229,14 @@ public class Helper {
     }
 
     public static boolean compareTwoDoubles(double a, double b) {
+        Log.d(tag, String.format("[compareTwoDoubles] a: %.3f, b: %.3f", a, b));
         return Math.abs(a - b) <= Consts.COMPARISON_THRESHOLD;
+    }
+
+    public static boolean compareDoubleAndInteger(double a, int b) {
+        return Math.abs(a - (double)b) <= Consts.COMPARISON_THRESHOLD ||
+                Math.abs(a - (double)b - 1) <= Consts.COMPARISON_THRESHOLD ||
+                Math.abs(a - (double)b + 1) <= Consts.COMPARISON_THRESHOLD;
     }
 
     public static void logGeneratedTracks(List<Track> tracks) {

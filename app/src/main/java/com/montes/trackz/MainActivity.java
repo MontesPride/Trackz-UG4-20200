@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         series.setColor(Color.argb(0xFF, 0xAA, 0x44, 0x88));
         series.setThickness(20);
         series.setAnimated(true);*/
-        this.graphView.getGridLabelRenderer().setVerticalLabelsVisible(false);
-        this.graphView.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+        //this.graphView.getGridLabelRenderer().setVerticalLabelsVisible(false);
+        //this.graphView.getGridLabelRenderer().setHorizontalLabelsVisible(false);
         this.graphView.getGridLabelRenderer().setGridColor(Color.argb(0x00, 0xFF, 0xFF, 0xFF));
         //this.graphView.addSeries(series);
 
