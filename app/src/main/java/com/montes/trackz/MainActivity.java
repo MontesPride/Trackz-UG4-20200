@@ -1,13 +1,17 @@
 package com.montes.trackz;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jjoe64.graphview.GraphView;
@@ -18,6 +22,7 @@ import com.montes.trackz.generators.procedural.ProceduralTrackGenerator;
 import com.montes.trackz.tracks.Track;
 import com.montes.trackz.tracks.TrackImpl;
 import com.montes.trackz.util.Consts;
+import com.montes.trackz.util.StaticDataHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,61 +72,43 @@ public class MainActivity extends AppCompatActivity {
         Log.d(tag, "[onCreate] Start");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //setTrackGenerator(new BasicTrackGenerator(this.getApplicationContext()));
         setTrackGenerator(new ProceduralTrackGenerator(this.getApplicationContext()));
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
         this.graphView = findViewById(R.id.graph);
-        //GraphView graph = findViewById(R.id.graph);
-/*        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(0, 2),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6),
-                new DataPoint(5, 15)
-        });
-        series.setColor(Color.argb(0xFF, 0xAA, 0x44, 0x88));
-        series.setThickness(20);
-        series.setAnimated(true);*/
-        //this.graphView.getGridLabelRenderer().setVerticalLabelsVisible(false);
-        //this.graphView.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+        this.graphView.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+        this.graphView.getGridLabelRenderer().setVerticalLabelsVisible(false);
         this.graphView.getGridLabelRenderer().setGridColor(Color.argb(0x00, 0xFF, 0xFF, 0xFF));
-        //this.graphView.addSeries(series);
 
-        renderTrack(getTrackGenerator(ProceduralTrackGenerator.class).getNextTrack());
-
-/*        FloatingActionButton fabGenerateBasicTrack = findViewById(R.id.fabGenerateBasicTrack);
-        fabGenerateBasicTrack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Generating Track using BasicTrackGenerator", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                getTrackGenerator(BasicTrackGenerator.class).getNextTrack();
-            }
-        });*/
+        Track track = getTrackGenerator(ProceduralTrackGenerator.class).getNextTrack();
+        setTrackScore(track.getTrackScore());
+        setTrackString(track.getTrackListAsString());
+        renderTrack(track);
 
         FloatingActionButton fabGenerateProceduralTrack = findViewById(R.id.fabGenerateProceduralTrack);
         fabGenerateProceduralTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-/*                Snackbar.make(view, "Generating Track using ProceduralTrackGenerator", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                //getTrackGenerator(ProceduralTrackGenerator.class).getNextTrack();
-                renderTrack(getTrackGenerator(ProceduralTrackGenerator.class).getNextTrack());
+                Track track = getTrackGenerator(ProceduralTrackGenerator.class).getNextTrack();
+                setTrackScore(track.getTrackScore());
+                setTrackString(track.getTrackListAsString());
+                renderTrack(track);
             }
         });
 
-/*        FloatingActionButton fabTrackValidator = findViewById(R.id.fabTrackValidator);
-        fabTrackValidator.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabGoToSettings = findViewById(R.id.fabSettings);
+        fabGoToSettings.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Checking Validator", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                getTrackGenerator(BasicTrackGenerator.class).checkValidator();
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             }
-        });*/
+        });
+
+        FloatingActionButton fabGoToInfo = findViewById(R.id.fabInfo);
+        fabGoToInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, InfoActivity.class));
+            }
+        });
 
         Log.d(tag, "[onCreate] End");
     }
@@ -209,13 +196,29 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(tag, String.format("[setViewportSize] ratio: %.2f, middle: %.2f, width: %.2f", ratio, middle, width));
 
-        //double viewportSize = Consts.FIELD_SIZE * Consts.VIEWPORT_SCALE + 2;
-        //Log.d(tag, String.format("[setViewport] viewportSize: %.1f", viewportSize));
-        //this.graphView.getViewport().setXAxisBoundsManual(true);
-        //this.graphView.getViewport().setYAxisBoundsManual(true);
-
         this.graphView.getViewport().setScalable(true);
         this.graphView.getViewport().setScalableY(true);
         Log.d(tag, "[setViewportSize] end");
     }
+
+    public void setTrackScore(int trackScore) {
+        if (!StaticDataHolder.getShowTrackScore())
+            return;
+        TextView scoreView = findViewById(R.id.scoreView);
+        scoreView.setText(String.format("Score: %d/10", trackScore));
+        scoreView.setTextSize(Consts.TEXT_BASE + trackScore * Consts.TEXT_SCALE);
+        if (trackScore == 10) {
+            scoreView.setTypeface(null, Typeface.BOLD);
+        } else {
+            scoreView.setTypeface(null, Typeface.NORMAL);
+        }
+    }
+
+    public void setTrackString(String trackString) {
+        if (!StaticDataHolder.getShowTrackString())
+            return;
+        TextView trackStringView = findViewById(R.id.trackStringView);
+        trackStringView.setText(trackString);
+    }
+
 }

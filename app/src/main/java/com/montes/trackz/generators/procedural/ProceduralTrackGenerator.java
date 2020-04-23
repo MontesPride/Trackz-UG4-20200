@@ -11,6 +11,7 @@ import com.montes.trackz.tracks.Track;
 import com.montes.trackz.tracks.TrackImpl;
 import com.montes.trackz.util.Consts;
 import com.montes.trackz.util.Helper;
+import com.montes.trackz.util.StaticDataHolder;
 import com.montes.trackz.util.TestTrackz;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
     public ProceduralTrackGenerator(Context context) {
         super(context);
 
-        this.fieldSize = Consts.FIELD_SIZE * Consts.UNIT;
+        this.fieldSize = Integer.parseInt(StaticDataHolder.getFieldSize()) * Consts.UNIT;
         this.numOfGeneratedPointsMin = Consts.NUM_OF_GENERATED_POINTS_MIN;
         this.numOfGeneratedPointsMax = Consts.NUM_OF_GENERATED_POINTS_MAX;
 
@@ -117,7 +118,7 @@ public class ProceduralTrackGenerator extends TrackGeneratorImpl {
     private Point transformGeneratedPoint(int x, int y) {
 
         int magnitude = (int) Math.sqrt(x * x + y * y);
-        int multiplier = Math.max((Consts.FIELD_SIZE / Consts.UNIT_MULTIPLIER) * Consts.TRANSFORMATION_MULTIPLIER / (magnitude + 1), 1) * Consts.UNIT_MULTIPLIER;
+        int multiplier = Math.max((this.fieldSize / Consts.UNIT_MULTIPLIER) * Consts.TRANSFORMATION_MULTIPLIER / (magnitude + 1), 1) * Consts.UNIT_MULTIPLIER;
 
         Log.d(tag, String.format("[transformGeneratedPoint] x: %d, y: %d, magnitude: %d, multiplier: %d", x, y, magnitude, multiplier));
 

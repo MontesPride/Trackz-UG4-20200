@@ -41,6 +41,10 @@ public class Consts {
     public static final int SERIES_MAX_COUNT = 10000;
     public static final double SERIES_STEP = 0.05;
     public static final double SERIES_ANGLE = 0.1;
-    public static final double SERIES_DISTANCE = 0.25;
+    public static final double SERIES_STRAIGHT_DISTANCE = 0.125;
+    public static final double SERIES_CURVE_DISTANCE = 0;
+
+    public static final int TEXT_SCALE = 2;
+    public static final int TEXT_BASE = 15;
 
 }

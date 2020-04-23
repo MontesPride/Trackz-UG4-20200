@@ -11,7 +11,7 @@ public class TrackPieceD extends TrackPieceStraight {
     private static final double staticLength = Consts.UNIT * 4;
     private static final double staticAngle = 0;
     private static final int staticLevels = 0;
-    private static final int staticColor = Color.argb(Consts.COLOR_ALPHA, 0x15, 0x70, 0x09);
+    private static final int staticColor = Color.argb(Consts.COLOR_ALPHA, 0x08, 0x45, 0x00);
 
     public TrackPieceD() {
         super(staticId, staticName, staticLength, staticColor);

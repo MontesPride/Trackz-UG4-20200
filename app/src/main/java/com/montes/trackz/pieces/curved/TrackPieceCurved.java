@@ -77,7 +77,8 @@ public abstract class TrackPieceCurved extends TrackPiece {
             upOrDown = !upOrDown;
 
         LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>();
-        while (x < x_end) {
+        x += Consts.SERIES_CURVE_DISTANCE;
+        while (x < x_end - Consts.SERIES_CURVE_DISTANCE) {
             y = getY(x, this.getStraightLength(), circleCenter.getX(), circleCenter.getY(), upOrDown);
             lineGraphSeries.appendData(new DataPoint(x, y), true, Consts.SERIES_MAX_COUNT);
             x += Consts.SERIES_STEP;

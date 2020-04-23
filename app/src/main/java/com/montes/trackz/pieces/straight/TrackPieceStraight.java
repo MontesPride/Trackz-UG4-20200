@@ -36,15 +36,15 @@ public abstract class TrackPieceStraight extends TrackPiece {
 
         if (Helper.compareTwoDoubles(x_start, x_end)) {
             if (y_start < y_end) {
-                y_start -= Consts.SERIES_DISTANCE;
-                y_end += Consts.SERIES_DISTANCE;
+                y_start += Consts.SERIES_STRAIGHT_DISTANCE;
+                y_end -= Consts.SERIES_STRAIGHT_DISTANCE;
             } else {
-                y_start += Consts.SERIES_DISTANCE;
-                y_end -= Consts.SERIES_DISTANCE;
+                y_start -= Consts.SERIES_STRAIGHT_DISTANCE;
+                y_end += Consts.SERIES_STRAIGHT_DISTANCE;
             }
         } else {
-            x_start += Consts.SERIES_DISTANCE;
-            x_end += Consts.SERIES_DISTANCE;
+            x_start += Consts.SERIES_STRAIGHT_DISTANCE;
+            x_end -= Consts.SERIES_STRAIGHT_DISTANCE;
         }
 
         LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(new DataPoint[] {

@@ -20,4 +20,6 @@ public interface Track {
 
     List<LineGraphSeries<DataPoint>> getTrackAsCurve();
 
+    int getTrackScore();
+
 }

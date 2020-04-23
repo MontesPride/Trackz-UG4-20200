@@ -7,9 +7,12 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.montes.trackz.generators.procedural.DirectionClass;
 import com.montes.trackz.generators.procedural.Point;
 import com.montes.trackz.pieces.TrackPiece;
+import com.montes.trackz.pieces.straight.bridges.TrackPieceBridge;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TrackImpl implements Track {
     private static final String tag = "TrackImpl";
@@ -94,8 +97,14 @@ public class TrackImpl implements Track {
         double angle = DirectionClass.getDirectionAsAngle(this.startingPoint.getDirection());
         int levels = 0;
         for (TrackPiece trackPiece : this.trackPieces) {
-            //Log.d(tag, String.format("[getTrackAsCurve] (%.3f, %.3f) x: %.3f, y: %.3f, angle: %.3f, levels: %d", x, y, x, y, angle, levels));
+            Log.d(tag, String.format("[getTrackAsCurve] (%.3f, %.3f) x: %.3f, y: %.3f, angle: %.3f, levels: %d", x, y, x, y, angle, levels));
 
+/*            if (trackPiece instanceof TrackPieceBridge) {
+                List<LineGraphSeries<DataPoint>> lineGraphSeriesListBridge = ((TrackPieceBridge) trackPiece).getTrackPieceBridgeAsCurve(x, y, angle, levels);
+                lineGraphSeriesList.addAll(lineGraphSeriesListBridge);
+            } else {
+                lineGraphSeriesList.add(trackPiece.getTrackPieceAsCurve(x, y, angle, levels));
+            }*/
             lineGraphSeriesList.add(trackPiece.getTrackPieceAsCurve(x, y, angle, levels));
 
             x += trackPiece.getLength() * Math.cos(angle + trackPiece.getAngle());
@@ -107,6 +116,45 @@ public class TrackImpl implements Track {
         }
         //Log.d(tag, String.format("[getTrackAsCurve] (%.3f, %.3f) x: %.3f, y: %.3f, angle: %.3f, levels: %d", x, y, x, y, angle, levels));
         return lineGraphSeriesList;
+    }
+
+    @Override
+    public int getTrackScore() {
+        int score = 1;
+        double angle = DirectionClass.getDirectionAsAngle(this.startingPoint.getDirection());
+        double newAngle = DirectionClass.getDirectionAsAngle(this.startingPoint.getDirection());
+        boolean direction = true;
+        int directionChange = 0;
+        boolean areBridges = false;
+        Set<String> uniqueTrackPieces = new HashSet<>();
+        for (TrackPiece trackPiece : this.trackPieces) {
+            if (trackPiece instanceof TrackPieceBridge)
+                areBridges = true;
+            uniqueTrackPieces.add(trackPiece.getId());
+            if (trackPiece.getAngle() != 0) {
+                newAngle = angle + 2 * trackPiece.getAngle();
+            }
+            if (newAngle >= angle) {
+                if (!direction) {
+                    directionChange++;
+                    direction = true;
+                }
+            } else if (newAngle <= angle){
+                if (direction) {
+                    directionChange++;
+                    direction = false;
+                }
+            }
+            if (trackPiece.getAngle() != 0) {
+                angle += 2 * trackPiece.getAngle();
+            }
+        }
+
+        score = directionChange + (uniqueTrackPieces.size() * 2 / 3) + (areBridges ? 2 : 0);
+
+        Log.d(tag, String.format("[getTrackScore] directionChange: %d, uniqueTrackPieces: %d, areBridges: %s, score: %d", directionChange, uniqueTrackPieces.size(), areBridges, score));
+
+        return Math.max(1, Math.min(10, score));
     }
 
 }
